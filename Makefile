@@ -10,7 +10,7 @@ CXXFLAGS = -std=c++11 -Wall -Wextra -pedantic
 TARGET = word_find
 
 # Source files
-SRCS = main.cpp
+SRCS = wordfindgame.cpp
 
 # Default rule to build the target
 all: $(TARGET)
