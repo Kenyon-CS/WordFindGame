@@ -26,7 +26,7 @@ bool placeWordInGrid(std::vector<std::vector<char>>& grid, const std::string& wo
 void generateWordGrid(const std::vector<std::string>& words, std::vector<std::vector<char>>& grid);
 void fillEmptySpaces(std::vector<std::vector<char>>& grid);
 void printGrid(const std::vector<std::vector<char>>& grid);
-void writeGridToFile(const std::vector<std::vector<char>>& grid, const std::string& filename);
+void writeGridToFile(const std::vector<std::vector<char>>& grid, const std::vector<std::string>& words, const std::string& filename);
 
 int main() {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
@@ -66,10 +66,10 @@ int main() {
     std::cout << "\nEnter the filename to save the grid: ";
     std::getline(std::cin, outputFilename);
 
-    // Write the grid to the file
-    writeGridToFile(grid, outputFilename);
+    // Write the grid and words to the file
+    writeGridToFile(grid, selectedWords, outputFilename);
 
-    std::cout << "\nGrid has been written to " << outputFilename << std::endl;
+    std::cout << "\nGrid and word list have been written to " << outputFilename << std::endl;
 
     // Output the list of words to find
     std::cout << "\nWords to find:\n";
@@ -91,7 +91,9 @@ void loadWordsFromFile(const std::string& filename, std::vector<std::string>& wo
         if (!word.empty()) {
             // Convert word to uppercase
             std::transform(word.begin(), word.end(), word.begin(), ::toupper);
-            words.push_back(word);
+            if (word.length() <= GRID_SIZE) { // Ensure word fits in the grid
+                words.push_back(word);
+            }
         }
     }
     infile.close();
@@ -189,13 +191,15 @@ void printGrid(const std::vector<std::vector<char>>& grid) {
     }
 }
 
-void writeGridToFile(const std::vector<std::vector<char>>& grid, const std::string& filename) {
+void writeGridToFile(const std::vector<std::vector<char>>& grid, const std::vector<std::string>& words, const std::string& filename) {
     std::ofstream outfile(filename);
     if (!outfile) {
         std::cerr << "Unable to open output file: " << filename << std::endl;
         return;
     }
 
+    // Write the grid
+    outfile << "GRID:" << std::endl;
     // Write column numbers
     outfile << "   ";
     for (int col = 0; col < GRID_SIZE; ++col) {
@@ -210,6 +214,12 @@ void writeGridToFile(const std::vector<std::vector<char>>& grid, const std::stri
             outfile << " " << grid[row][col] << " ";
         }
         outfile << "\n";
+    }
+
+    // Write the words to find
+    outfile << "\nWORDS TO FIND:\n";
+    for (const auto& word : words) {
+        outfile << word << std::endl;
     }
 
     outfile.close();
