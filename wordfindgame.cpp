@@ -6,6 +6,7 @@
 #include <ctime>
 #include <algorithm>
 #include <random>
+#include <iomanip> 
 
 const int GRID_SIZE = 20;
 
